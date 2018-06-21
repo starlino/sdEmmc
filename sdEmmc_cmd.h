@@ -81,17 +81,17 @@ esp_err_t sdEmmc_write_sectors_dma_no_wait(sdmmc_card_t* card, const void* src,
 esp_err_t sdEmmc_wait_ready(sdmmc_card_t* card, uint32_t timeout_ms);        
 
 /**
- * Write given number of sectors to SD/MMC card
+ * Read given number of sectors to SD/MMC card
  *
  * @param card  pointer to card information structure previously initialized using sdEmmc_card_init
- * @param dst   pointer to data buffer to write into; buffer size must be at least sector_count * card->csd.sector_size
+ * @param dst   pointer to DMA buffer to read into; buffer size must be at least sector_count * card->csd.sector_size
  * @param start_sector  sector where to start reading
  * @param sector_count  number of sectors to read
  * @return
  *      - ESP_OK on success
  *      - One of the error codes from SDMMC host controller
  */
-esp_err_t sdEmmc_read_sectors(sdmmc_card_t* card, void* dst,
+esp_err_t sdEmmc_read_sectors_dma(sdmmc_card_t* card, void* dst,
         size_t start_sector, size_t sector_count);
 
 #ifdef __cplusplus

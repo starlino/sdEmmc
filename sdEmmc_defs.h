@@ -332,6 +332,13 @@
 #define SD_ACCESS_MODE_SDR104   3       /* UHS-I, 208 MHz clock */
 #define SD_ACCESS_MODE_DDR50    4       /* UHS-I, 50 MHz clock, DDR */
 
+
+#define MMC_FREQ_PROBING_400K		400		//Khz
+#define MMC_FREQ_DEFAULT_26M		26000	//Khz
+#define MMC_FREQ_HIGHSPEED_SDR_52M	52000	//Khz	
+#define MMC_FREQ_HIGHSPEED_DDR_104M	104000	//Khz
+
+
 /**
  * @brief Extract up to 32 sequential bits from an array of 32-bit words
  *

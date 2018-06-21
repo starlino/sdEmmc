@@ -35,7 +35,7 @@ extern "C" {
 #define SDMMC_HOST_DEFAULT() {\
     .flags = SDMMC_HOST_FLAG_4BIT | SDMMC_HOST_MEM_CARD, \
     .slot = SDMMC_HOST_SLOT_1, \
-    .max_freq_khz = SDMMC_FREQ_DEFAULT, \
+    .max_freq_khz = MMC_FREQ_PROBING_400K, \
     .io_voltage = 3.3f, \
     .init = &sdmmc_host_init, \
     .set_bus_width = &sdmmc_host_set_bus_width, \

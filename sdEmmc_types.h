@@ -122,9 +122,6 @@ typedef struct {
 #define SDMMC_HOST_MEM_CARD     BIT(10)     /*!< card in memory mode (SD or MMC) */
     int slot;                   /*!< slot number, to be passed to host functions */
     int max_freq_khz;           /*!< max frequency supported by the host */
-#define SDMMC_FREQ_DEFAULT      20000       /*!< SD/MMC Default speed (limited by clock divider) */
-#define SDMMC_FREQ_HIGHSPEED    40000       /*!< SD High speed (limited by clock divider) */
-#define SDMMC_FREQ_PROBING      400         /*!< SD/MMC probing speed */
     float io_voltage;           /*!< I/O voltage used by the controller (voltage switching is not supported) */
     esp_err_t (*init)(void);    /*!< Host function to initialize the driver */
     esp_err_t (*set_bus_width)(int slot, size_t width);    /*!< host function to set bus width */
