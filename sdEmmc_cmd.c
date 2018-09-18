@@ -28,7 +28,7 @@
 
 
 
-static const char* TAG = "sdmmc_cmd";
+
 
 static esp_err_t sdmmc_send_cmd(sdmmc_card_t* card, sdmmc_command_t* cmd);
 static esp_err_t sdmmc_send_app_cmd(sdmmc_card_t* card, sdmmc_command_t* cmd);
@@ -41,21 +41,19 @@ static esp_err_t sdmmc_decode_cid(sdmmc_response_t resp, sdmmc_cid_t* out_cid);
 static esp_err_t sdmmc_send_cmd_all_send_cid(sdmmc_card_t* card, sdmmc_cid_t* out_cid);
 static esp_err_t sdmmc_send_cmd_set_relative_addr(sdmmc_card_t* card, uint16_t* out_rca);
 static esp_err_t sdmmc_send_cmd_set_blocklen(sdmmc_card_t* card, sdmmc_csd_t* csd);
-static esp_err_t sdmmc_send_cmd_switch_func(sdmmc_card_t* card,
-        uint32_t mode, uint32_t group, uint32_t function,
-        sdmmc_switch_func_rsp_t* resp);
-static esp_err_t sdmmc_enable_hs_mode(sdmmc_card_t* card);
+//static esp_err_t sdmmc_send_cmd_switch_func(sdmmc_card_t* card,        uint32_t mode, uint32_t group, uint32_t function,        sdmmc_switch_func_rsp_t* resp);
+//static esp_err_t sdmmc_enable_hs_mode(sdmmc_card_t* card);
 static esp_err_t mmc_decode_csd(sdmmc_response_t response, sdmmc_csd_t* out_csd);
 static esp_err_t sd_decode_csd(sdmmc_response_t response, sdmmc_csd_t* out_csd);
 static esp_err_t sdmmc_send_cmd_send_csd(sdmmc_card_t* card, sdmmc_csd_t* out_csd);
 static esp_err_t sdmmc_mem_send_cxd_data(sdmmc_card_t* card , int opcode, void *data, size_t datalen);
 static esp_err_t sdmmc_send_cmd_select_card(sdmmc_card_t* card, uint32_t rca);
-static esp_err_t sdmmc_decode_scr(uint32_t *raw_scr, sdmmc_scr_t* out_scr);
-static esp_err_t sdmmc_send_cmd_send_scr(sdmmc_card_t* card, sdmmc_scr_t *out_scr);
-static esp_err_t sdmmc_send_cmd_set_bus_width(sdmmc_card_t* card, int width);
-static esp_err_t sdmmc_mmc_command_set(sdmmc_card_t* card, uint8_t set);
+//static esp_err_t sdmmc_decode_scr(uint32_t *raw_scr, sdmmc_scr_t* out_scr);
+//static esp_err_t sdmmc_send_cmd_send_scr(sdmmc_card_t* card, sdmmc_scr_t *out_scr);
+//static esp_err_t sdmmc_send_cmd_set_bus_width(sdmmc_card_t* card, int width);
+//static esp_err_t sdmmc_mmc_command_set(sdmmc_card_t* card, uint8_t set);
 static esp_err_t sdmmc_mmc_switch(sdmmc_card_t* card, uint8_t set, uint8_t index, uint8_t value);
-static esp_err_t sdmmc_send_cmd_stop_transmission(sdmmc_card_t* card, uint32_t* status);
+//static esp_err_t sdmmc_send_cmd_stop_transmission(sdmmc_card_t* card, uint32_t* status);
 static esp_err_t sdmmc_send_cmd_send_status(sdmmc_card_t* card, uint32_t* out_status);
 static esp_err_t sdmmc_send_cmd_crc_on_off(sdmmc_card_t* card, bool crc_enable);
 static uint32_t  get_host_ocr(float voltage);
@@ -383,14 +381,14 @@ static esp_err_t sdmmc_send_cmd(sdmmc_card_t* card, sdmmc_command_t* cmd)
         log_d( "sdmmc_req_run returned 0x%x", err);
         return err;
     }
-    int state = MMC_R1_CURRENT_STATE(cmd->response);
+    
     log_v( "cmd response %08x %08x %08x %08x err=0x%x state=%d",
                cmd->response[0],
                cmd->response[1],
                cmd->response[2],
                cmd->response[3],
                cmd->error,
-               state);
+               (int)(MMC_R1_CURRENT_STATE(cmd->response)));
     return cmd->error;
 }
 
@@ -667,11 +665,11 @@ static esp_err_t sdmmc_send_cmd_send_csd(sdmmc_card_t* card, sdmmc_csd_t* out_cs
     if (err != ESP_OK) {
         return err;
     }
-    uint32_t* ptr = cmd.response;
+    
     if (is_spi) {
         flip_byte_order(spi_buf,  sizeof(spi_buf));
-        ptr = spi_buf;
     }
+
     if (card->host.flags & SDMMC_HOST_MMC_CARD) /* MMC mode */
         err = mmc_decode_csd(cmd.response, out_csd);
     else /* SD mode */
@@ -726,7 +724,7 @@ static esp_err_t sdmmc_send_cmd_select_card(sdmmc_card_t* card, uint32_t rca)
     return sdmmc_send_cmd(card, &cmd);
 }
 
-static esp_err_t sdmmc_decode_scr(uint32_t *raw_scr, sdmmc_scr_t* out_scr)
+/*static esp_err_t sdmmc_decode_scr(uint32_t *raw_scr, sdmmc_scr_t* out_scr)
 {
     sdmmc_response_t resp = {0xabababab, 0xabababab, 0x12345678, 0x09abcdef};
     resp[1] = __builtin_bswap32(raw_scr[0]);
@@ -738,9 +736,9 @@ static esp_err_t sdmmc_decode_scr(uint32_t *raw_scr, sdmmc_scr_t* out_scr)
     out_scr->sd_spec = SCR_SD_SPEC(resp);
     out_scr->bus_width = SCR_SD_BUS_WIDTHS(resp);
     return ESP_OK;
-}
+}*/
 
-static esp_err_t sdmmc_send_cmd_send_scr(sdmmc_card_t* card, sdmmc_scr_t *out_scr)
+/*static esp_err_t sdmmc_send_cmd_send_scr(sdmmc_card_t* card, sdmmc_scr_t *out_scr)
 {
     size_t datalen = 8;
     uint32_t* buf = (uint32_t*) heap_caps_malloc(datalen, MALLOC_CAP_DMA);
@@ -760,9 +758,9 @@ static esp_err_t sdmmc_send_cmd_send_scr(sdmmc_card_t* card, sdmmc_scr_t *out_sc
     }
     free(buf);
     return err;
-}
+}*/
 
-static esp_err_t sdmmc_send_cmd_set_bus_width(sdmmc_card_t* card, int width)
+/*static esp_err_t sdmmc_send_cmd_set_bus_width(sdmmc_card_t* card, int width)
 {
     uint8_t ignored[8];
     sdmmc_command_t cmd = {
@@ -775,9 +773,9 @@ static esp_err_t sdmmc_send_cmd_set_bus_width(sdmmc_card_t* card, int width)
     };
 
     return sdmmc_send_app_cmd(card, &cmd);
-}
+}*/
 
-static esp_err_t sdmmc_mmc_command_set(sdmmc_card_t* card, uint8_t set)
+/*static esp_err_t sdmmc_mmc_command_set(sdmmc_card_t* card, uint8_t set)
 {
     sdmmc_command_t cmd = {
             .opcode = MMC_SWITCH,
@@ -795,7 +793,7 @@ static esp_err_t sdmmc_mmc_command_set(sdmmc_card_t* card, uint8_t set)
     }
 
     return err;
-}
+}*/
 static esp_err_t sdmmc_mmc_switch(sdmmc_card_t* card, uint8_t set, uint8_t index, uint8_t value)
 {
     sdmmc_command_t cmd = {
@@ -813,7 +811,7 @@ static esp_err_t sdmmc_mmc_switch(sdmmc_card_t* card, uint8_t set, uint8_t index
     return err;
 }
 
-static esp_err_t sdmmc_send_cmd_stop_transmission(sdmmc_card_t* card, uint32_t* status)
+/*static esp_err_t sdmmc_send_cmd_stop_transmission(sdmmc_card_t* card, uint32_t* status)
 {
     sdmmc_command_t cmd = {
             .opcode = MMC_STOP_TRANSMISSION,
@@ -825,7 +823,7 @@ static esp_err_t sdmmc_send_cmd_stop_transmission(sdmmc_card_t* card, uint32_t* 
         *status = MMC_R1(cmd.response);
     }
     return err;
-}
+}*/
 
 static esp_err_t sdmmc_send_cmd_crc_on_off(sdmmc_card_t* card, bool crc_enable)
 {
@@ -905,12 +903,12 @@ esp_err_t sdEmmc_write_sectors(sdmmc_card_t* card, const void* src,
     }
     return err;
 }
-
+#define sdEmmc_MILLIS() ( (uint32_t ) (esp_timer_get_time() / 1000) )
 
 esp_err_t sdEmmc_wait_ready(sdmmc_card_t* card, uint32_t timeout_ms){
     uint32_t status = 0;
     size_t count = 0;
-    uint32_t t0 = millis();
+    uint32_t t0 =  sdEmmc_MILLIS();
     if(host_is_spi(card)) return ESP_OK;
     do {
         esp_err_t err = sdmmc_send_cmd_send_status(card, &status);
@@ -920,7 +918,7 @@ esp_err_t sdEmmc_wait_ready(sdmmc_card_t* card, uint32_t timeout_ms){
         if (++count % 10 == 0) {
             log_v( "waiting for card to become ready (%d)", count);
         }
-    }while(!(status & MMC_R1_READY_FOR_DATA) && (millis() - t0 < timeout_ms));
+    }while(!(status & MMC_R1_READY_FOR_DATA) && (sdEmmc_MILLIS() - t0 < timeout_ms));
     return ESP_OK;
 }
 
@@ -1050,7 +1048,7 @@ esp_err_t sdEmmc_read_sectors_dma(sdmmc_card_t* card, void* dst,
     return ESP_OK;
 }
 
-static esp_err_t sdmmc_send_cmd_switch_func(sdmmc_card_t* card,
+/*static esp_err_t sdmmc_send_cmd_switch_func(sdmmc_card_t* card,
         uint32_t mode, uint32_t group, uint32_t function,
         sdmmc_switch_func_rsp_t* resp)
 {
@@ -1070,7 +1068,7 @@ static esp_err_t sdmmc_send_cmd_switch_func(sdmmc_card_t* card,
     }
 
     uint32_t group_shift = (group - 1) << 2;
-    /* all functions which should not be affected are set to 0xf (no change) */
+    // all functions which should not be affected are set to 0xf (no change) 
     uint32_t other_func_mask = (0x00ffffff & ~(0xf << group_shift));
     uint32_t func_val = (function << group_shift) | other_func_mask;
 
@@ -1091,7 +1089,7 @@ static esp_err_t sdmmc_send_cmd_switch_func(sdmmc_card_t* card,
     flip_byte_order(resp->data, sizeof(sdmmc_switch_func_rsp_t));
     uint32_t resp_ver = SD_SFUNC_VER(resp->data);
     if (resp_ver == 0) {
-        /* busy response is never sent */
+        // busy response is never sent 
     } else if (resp_ver == 1) {
         if (SD_SFUNC_BUSY(resp->data, group) & (1 << function)) {
             log_d( "%s: response indicates function %d:%d is busy",
@@ -1104,9 +1102,9 @@ static esp_err_t sdmmc_send_cmd_switch_func(sdmmc_card_t* card,
         return ESP_ERR_INVALID_RESPONSE;
     }
     return ESP_OK;
-}
+}*/
 
-static esp_err_t sdmmc_enable_hs_mode(sdmmc_card_t* card)
+/*static esp_err_t sdmmc_enable_hs_mode(sdmmc_card_t* card)
 {
     if (card->scr.sd_spec < SCR_SD_SPEC_VER_1_10 ||
         ((card->csd.card_command_class & SD_CSD_CCC_SWITCH) == 0)) {
@@ -1137,4 +1135,4 @@ static esp_err_t sdmmc_enable_hs_mode(sdmmc_card_t* card)
 out:
     free(response);
     return err;
-}
+}*/
