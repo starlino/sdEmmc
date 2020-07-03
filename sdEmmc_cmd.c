@@ -288,8 +288,8 @@ esp_err_t sdEmmc_card_init(const sdmmc_host_t* config, sdmmc_card_t* card)
 			log_e( "failed to switch speed");
 			return err;
 		}
+        
 
-	
 		if (card->host.flags & SDMMC_HOST_FLAG_8BIT) {
 			width = 8;
 			width_value = EXT_CSD_BUS_WIDTH_8;
@@ -313,6 +313,7 @@ esp_err_t sdEmmc_card_init(const sdmmc_host_t* config, sdmmc_card_t* card)
 							" (%d bit)\n", __func__, powerclass);
 				return err;
 			}
+            ets_delay_us(10000);
 		}
 		if (width != 1) {
 			log_d("setting bus width:%u width_value:%X",width,width_value);
